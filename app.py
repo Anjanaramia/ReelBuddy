@@ -7,47 +7,47 @@ import time
 # --- DATABASE OF MOVES WITH YOUTUBE TIMESTAMPS ---
 # For the MVP, we use placeholder YouTube links (famous music videos/tutorials) 
 # and start times to simulate exactly how video learning works.
-# Using universally valid IDs (like Shakira's Waka Waka and Psy's Gangnam Style) so the player doesn't break!
+# Using universally embeddable non-copyrighted test videos (Big Buck Bunny) so YouTube doesn't block it on Streamlit Cloud!
 MOVES_DB = {
     "Hindi/Bollywood": {
         "Beginner": [
-            {"name": "Thumka", "youtube_url": "https://www.youtube.com/watch?v=pRpeEdMmi3I", "start_time": 45},
-            {"name": "Lightbulb Twist", "youtube_url": "https://www.youtube.com/watch?v=pRpeEdMmi3I", "start_time": 70},
-            {"name": "Shoulder Drop", "youtube_url": "https://www.youtube.com/watch?v=pRpeEdMmi3I", "start_time": 90}
+            {"name": "Thumka", "youtube_url": "https://www.youtube.com/watch?v=aqz-KE-bpKQ", "start_time": 45},
+            {"name": "Lightbulb Twist", "youtube_url": "https://www.youtube.com/watch?v=aqz-KE-bpKQ", "start_time": 70},
+            {"name": "Shoulder Drop", "youtube_url": "https://www.youtube.com/watch?v=aqz-KE-bpKQ", "start_time": 90}
         ]
     },
     "Punjabi": {
         "Beginner": [
-            {"name": "Bhangra Shoulders", "youtube_url": "https://www.youtube.com/watch?v=pRpeEdMmi3I", "start_time": 105},
-            {"name": "Double Clap", "youtube_url": "https://www.youtube.com/watch?v=pRpeEdMmi3I", "start_time": 120},
-            {"name": "Foot Tap", "youtube_url": "https://www.youtube.com/watch?v=pRpeEdMmi3I", "start_time": 135}
+            {"name": "Bhangra Shoulders", "youtube_url": "https://www.youtube.com/watch?v=aqz-KE-bpKQ", "start_time": 105},
+            {"name": "Double Clap", "youtube_url": "https://www.youtube.com/watch?v=aqz-KE-bpKQ", "start_time": 120},
+            {"name": "Foot Tap", "youtube_url": "https://www.youtube.com/watch?v=aqz-KE-bpKQ", "start_time": 135}
         ]
     },
     "Tamil (Kuthu)": {
         "Beginner": [
-            {"name": "Local Kuthu Step", "youtube_url": "https://www.youtube.com/watch?v=pRpeEdMmi3I", "start_time": 150},
-            {"name": "Whistle Podu", "youtube_url": "https://www.youtube.com/watch?v=pRpeEdMmi3I", "start_time": 165},
-            {"name": "Shirt Collar Dust", "youtube_url": "https://www.youtube.com/watch?v=pRpeEdMmi3I", "start_time": 180}
+            {"name": "Local Kuthu Step", "youtube_url": "https://www.youtube.com/watch?v=aqz-KE-bpKQ", "start_time": 150},
+            {"name": "Whistle Podu", "youtube_url": "https://www.youtube.com/watch?v=aqz-KE-bpKQ", "start_time": 165},
+            {"name": "Shirt Collar Dust", "youtube_url": "https://www.youtube.com/watch?v=aqz-KE-bpKQ", "start_time": 180}
         ]
     },
     "Telugu (Teen Maar)": {
         "Beginner": [
-            {"name": "Teen Maar Beat", "youtube_url": "https://www.youtube.com/watch?v=pRpeEdMmi3I", "start_time": 195},
-            {"name": "Hand Spin", "youtube_url": "https://www.youtube.com/watch?v=pRpeEdMmi3I", "start_time": 210},
-            {"name": "Jump Step", "youtube_url": "https://www.youtube.com/watch?v=pRpeEdMmi3I", "start_time": 225}
+            {"name": "Teen Maar Beat", "youtube_url": "https://www.youtube.com/watch?v=aqz-KE-bpKQ", "start_time": 195},
+            {"name": "Hand Spin", "youtube_url": "https://www.youtube.com/watch?v=aqz-KE-bpKQ", "start_time": 210},
+            {"name": "Jump Step", "youtube_url": "https://www.youtube.com/watch?v=aqz-KE-bpKQ", "start_time": 225}
         ]
     },
     "Kannada": {
         "Beginner": [
-            {"name": "Sandalwood Sway", "youtube_url": "https://www.youtube.com/watch?v=pRpeEdMmi3I", "start_time": 50},
-            {"name": "Folk Step", "youtube_url": "https://www.youtube.com/watch?v=pRpeEdMmi3I", "start_time": 80}
+            {"name": "Sandalwood Sway", "youtube_url": "https://www.youtube.com/watch?v=aqz-KE-bpKQ", "start_time": 50},
+            {"name": "Folk Step", "youtube_url": "https://www.youtube.com/watch?v=aqz-KE-bpKQ", "start_time": 80}
         ]
     },
     "American Pop/Hip Hop": {
         "Beginner": [
-            {"name": "The Slide", "youtube_url": "https://www.youtube.com/watch?v=9bZkp7q19f0", "start_time": 60},
-            {"name": "The Woah", "youtube_url": "https://www.youtube.com/watch?v=9bZkp7q19f0", "start_time": 75},
-            {"name": "Two-Step", "youtube_url": "https://www.youtube.com/watch?v=9bZkp7q19f0", "start_time": 90}
+            {"name": "The Slide", "youtube_url": "https://www.youtube.com/watch?v=aqz-KE-bpKQ", "start_time": 60},
+            {"name": "The Woah", "youtube_url": "https://www.youtube.com/watch?v=aqz-KE-bpKQ", "start_time": 75},
+            {"name": "Two-Step", "youtube_url": "https://www.youtube.com/watch?v=aqz-KE-bpKQ", "start_time": 90}
         ]
     }
 }
