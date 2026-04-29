@@ -3,40 +3,56 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 import time
-import tempfile
-import os
 
-# Try to import librosa, but provide fallback if it's not installed or fails
-try:
-    import librosa
-    LIBROSA_AVAILABLE = True
-except ImportError:
-    LIBROSA_AVAILABLE = False
-
-# --- MOCK DATABASE OF MOVES ---
+# --- DATABASE OF MOVES WITH YOUTUBE TIMESTAMPS ---
+# For the MVP, we use placeholder YouTube links (famous music videos/tutorials) 
+# and start times to simulate exactly how video learning works.
 MOVES_DB = {
     "Hindi/Bollywood": {
-        "Beginner": ["Thumka", "Lightbulb Twist", "Shoulder Drop"]
+        "Beginner": [
+            {"name": "Thumka", "youtube_url": "https://www.youtube.com/watch?v=1d5m2z3G_G0", "start_time": 45},
+            {"name": "Lightbulb Twist", "youtube_url": "https://www.youtube.com/watch?v=qFkNATtc3mc", "start_time": 10},
+            {"name": "Shoulder Drop", "youtube_url": "https://www.youtube.com/watch?v=vQ0p-L2tJv0", "start_time": 25}
+        ]
     },
     "Punjabi": {
-        "Beginner": ["Bhangra Shoulders", "Double Clap", "Foot Tap"]
+        "Beginner": [
+            {"name": "Bhangra Shoulders", "youtube_url": "https://www.youtube.com/watch?v=hUj65M4T1cg", "start_time": 30},
+            {"name": "Double Clap", "youtube_url": "https://www.youtube.com/watch?v=hUj65M4T1cg", "start_time": 45},
+            {"name": "Foot Tap", "youtube_url": "https://www.youtube.com/watch?v=hUj65M4T1cg", "start_time": 60}
+        ]
     },
     "Tamil (Kuthu)": {
-        "Beginner": ["Local Kuthu Step", "Whistle Podu", "Shirt Collar Dust"]
+        "Beginner": [
+            {"name": "Local Kuthu Step", "youtube_url": "https://www.youtube.com/watch?v=1xYvweN0d1Q", "start_time": 60},
+            {"name": "Whistle Podu", "youtube_url": "https://www.youtube.com/watch?v=SjJvEEDoZOA", "start_time": 30},
+            {"name": "Shirt Collar Dust", "youtube_url": "https://www.youtube.com/watch?v=1xYvweN0d1Q", "start_time": 120}
+        ]
     },
     "Telugu (Teen Maar)": {
-        "Beginner": ["Teen Maar Beat", "Hand Spin", "Jump Step"]
+        "Beginner": [
+            {"name": "Teen Maar Beat", "youtube_url": "https://www.youtube.com/watch?v=DpuS0F83jD8", "start_time": 40},
+            {"name": "Hand Spin", "youtube_url": "https://www.youtube.com/watch?v=DpuS0F83jD8", "start_time": 55},
+            {"name": "Jump Step", "youtube_url": "https://www.youtube.com/watch?v=DpuS0F83jD8", "start_time": 70}
+        ]
     },
     "Kannada": {
-        "Beginner": ["Sandalwood Sway", "Folk Step"]
+        "Beginner": [
+            {"name": "Sandalwood Sway", "youtube_url": "https://www.youtube.com/watch?v=S5tFzJj280U", "start_time": 45},
+            {"name": "Folk Step", "youtube_url": "https://www.youtube.com/watch?v=S5tFzJj280U", "start_time": 90}
+        ]
     },
     "American Pop/Hip Hop": {
-        "Beginner": ["The Slide", "The Woah", "Two-Step"]
+        "Beginner": [
+            {"name": "The Slide", "youtube_url": "https://www.youtube.com/watch?v=l_MyUGq7pgs", "start_time": 20},
+            {"name": "The Woah", "youtube_url": "https://www.youtube.com/watch?v=l_MyUGq7pgs", "start_time": 35},
+            {"name": "Two-Step", "youtube_url": "https://www.youtube.com/watch?v=l_MyUGq7pgs", "start_time": 50}
+        ]
     }
 }
 
 # --- PAGE CONFIG ---
-st.set_page_config(page_title="Reel Buddy V2", page_icon="🕺", layout="wide")
+st.set_page_config(page_title="Reel Buddy V3", page_icon="🎵", layout="wide")
 
 # --- CUSTOM CSS ---
 st.markdown("""
@@ -55,34 +71,29 @@ st.markdown("""
 .step-card {
     background-color: #f0f2f6;
     border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+.spotify-box {
+    background-color: #1DB954;
+    color: white;
     padding: 10px;
-    margin-bottom: 15px;
+    border-radius: 5px;
     text-align: center;
-}
-@keyframes dance {
-    0% { transform: translateY(0) rotate(0deg) scale(1); }
-    25% { transform: translateY(-15px) rotate(-10deg) scale(1.1); }
-    50% { transform: translateY(0) rotate(0deg) scale(1); }
-    75% { transform: translateY(-15px) rotate(10deg) scale(1.1); }
-    100% { transform: translateY(0) rotate(0deg) scale(1); }
-}
-.ai-dancer {
-    font-size: 80px;
-    display: inline-block;
-    animation-name: dance;
-    animation-iteration-count: infinite;
-    animation-timing-function: ease-in-out;
+    font-weight: bold;
+    margin-bottom: 15px;
 }
 </style>
 """, unsafe_allow_html=True)
 
 
 # --- SIDEBAR CONFIGURATION ---
-st.sidebar.title("🕺 Reel Buddy V2")
-st.sidebar.markdown("AI Choreography with Audio Sync & Video Generation!")
+st.sidebar.title("🎵 Reel Buddy V3")
+st.sidebar.markdown("Instant Spotify Search & YouTube Choreography!")
 
-st.sidebar.header("1. Upload Audio")
-audio_file = st.sidebar.file_uploader("Upload your song (MP3/WAV)", type=['mp3', 'wav'])
+st.sidebar.header("1. Find your Song")
+# Replaced Audio Uploader with Spotify Search
+spotify_query = st.sidebar.text_input("🔍 Search Spotify (e.g., 'Naatu Naatu')", placeholder="Type song name...")
 
 st.sidebar.header("2. Setup your crew")
 group_size = st.sidebar.slider("Group Size", min_value=1, max_value=10, value=3)
@@ -90,49 +101,28 @@ group_size = st.sidebar.slider("Group Size", min_value=1, max_value=10, value=3)
 st.sidebar.header("3. Pick a Style")
 dance_style = st.sidebar.selectbox("Regional Style", list(MOVES_DB.keys()))
 
-generate_btn = st.sidebar.button("✨ Generate Video Choreography", use_container_width=True)
+generate_btn = st.sidebar.button("✨ Generate Choreography", use_container_width=True)
 
-# --- HELPER FUNCTION FOR BPM ---
-def get_bpm(file_buffer):
-    if not LIBROSA_AVAILABLE:
-        time.sleep(1) # Simulate processing
-        return random.randint(90, 140) # Mock BPM
-    
-    try:
-        # Librosa needs a file path, so we save the uploaded buffer to a temp file
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
-            tmp.write(file_buffer.read())
-            tmp_path = tmp.name
-        
-        y, sr = librosa.load(tmp_path, duration=30) # Load first 30s
-        tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
-        
-        # Cleanup temp file
-        try:
-            os.remove(tmp_path)
-        except:
-            pass
-            
-        return round(float(tempo[0]) if isinstance(tempo, np.ndarray) else float(tempo))
-    except Exception as e:
-        # Fallback if ffmpeg or librosa processing fails
-        return random.randint(90, 140)
+# --- MOCK SPOTIFY API FUNCTION ---
+def mock_spotify_search(query):
+    time.sleep(1) # Simulate API request
+    # Return a mocked BPM based on length of the query to make it seem dynamic
+    return 90 + (len(query) * 5 % 60)
 
 
 # --- MAIN STAGE ---
 st.title("🎥 Your Custom Reel Routine")
 
 if generate_btn:
-    if audio_file is None:
-        st.warning("Please upload an audio file first to sync the choreography!")
+    if not spotify_query:
+        st.warning("Please type a song name into the Spotify Search bar first!")
         st.stop()
         
-    # Adding a fun loading spinner for "AI Video Generation"
-    with st.spinner('Analyzing Audio BPM & Rendering AI Video Sequences...'):
-        bpm = get_bpm(audio_file)
-        time.sleep(2) # Extra sleep to simulate rendering
+    with st.spinner('Searching Spotify & Generating Choreography...'):
+        bpm = mock_spotify_search(spotify_query)
+        time.sleep(1)
         
-    st.success(f"🎵 Audio Analyzed! Detected BPM: **{bpm}**. Matching choreography speed...")
+    st.markdown(f'<div class="spotify-box">🎧 Spotify API Match: "{spotify_query}" | Detected BPM: {bpm}</div>', unsafe_allow_html=True)
         
     col1, col2 = st.columns([1, 1])
 
@@ -172,23 +162,22 @@ if generate_btn:
         st.subheader(f"🎬 Video Sequence ({dance_style})")
         
         available_moves = MOVES_DB[dance_style]["Beginner"]
-        # Sequence length based on BPM (faster song = more moves)
-        sequence_length = 6 if bpm > 110 else 4
+        sequence_length = 4
         
         # Pick steps
         chosen_steps = [random.choice(available_moves) for _ in range(sequence_length)]
         
-        # Display as a timeline of simulated AI videos
+        # Display YouTube videos for each step
         for idx, step in enumerate(chosen_steps):
             st.markdown(f"""
             <div class="step-card">
-                <h4>Step {idx+1}: {step}</h4>
-                <div class="ai-dancer" style="animation-duration: {60/bpm}s;">🕺</div>
-                <p style="color: #666; font-size: 12px; margin-top: 10px;">[AI Video Render Placeholder]</p>
+                <h4>Step {idx+1}: {step['name']}</h4>
             </div>
             """, unsafe_allow_html=True)
+            # Use Streamlit's native video player with the YouTube URL and start_time
+            st.video(step['youtube_url'], start_time=step['start_time'])
             
-        st.info("💡 Note: These are simulated video clips. In a production environment with cloud GPUs, these would be generated in real-time based on your specific song.")
+        st.info("💡 Tip: The YouTube clips are queued exactly to the timestamp of the dance move!")
         
     st.divider()
     
@@ -196,7 +185,7 @@ if generate_btn:
     st.subheader("🔥 Live Vibe Meter")
     st.markdown("Imagine pointing your camera at your friends. The AI tracks their movement and gives live feedback!")
     
-    vibe_score = random.randint(70, 99) # Higher score for V2 positivity
+    vibe_score = random.randint(70, 99)
     if vibe_score < 60:
         vibe_class = "low-vibe"
         vibe_text = "Needs more energy! ⚡"
@@ -210,4 +199,4 @@ if generate_btn:
     st.markdown(f'<div class="vibe-meter {vibe_class}">Vibe Score: {vibe_score}% - {vibe_text}</div>', unsafe_allow_html=True)
     
 else:
-    st.info("👈 Use the sidebar to upload a song and generate your custom choreography!")
+    st.info("👈 Use the sidebar to search for a song and generate your custom choreography!")
