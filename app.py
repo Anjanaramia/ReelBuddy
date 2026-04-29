@@ -13,49 +13,25 @@ try:
 except ImportError:
     LIBROSA_AVAILABLE = False
 
-# --- MOCK DATABASE OF MOVES WITH GIFS ---
-# Using generic placeholder GIFs to simulate AI video generation
+# --- MOCK DATABASE OF MOVES ---
 MOVES_DB = {
     "Hindi/Bollywood": {
-        "Beginner": [
-            {"name": "Thumka", "gif": "https://media.giphy.com/media/l2YWCHf5RZRoO33O0/giphy.gif"},
-            {"name": "Lightbulb Twist", "gif": "https://media.giphy.com/media/3o6wrFg0Ubgv1PjZ3a/giphy.gif"},
-            {"name": "Shoulder Drop", "gif": "https://media.giphy.com/media/l1IYfwozudAdkuZk4/giphy.gif"}
-        ]
+        "Beginner": ["Thumka", "Lightbulb Twist", "Shoulder Drop"]
     },
     "Punjabi": {
-        "Beginner": [
-            {"name": "Bhangra Shoulders", "gif": "https://media.giphy.com/media/3ohfFuqPNPTl9gwktG/giphy.gif"},
-            {"name": "Double Clap", "gif": "https://media.giphy.com/media/l2JhnvF9p3cfv9TgQ/giphy.gif"},
-            {"name": "Foot Tap", "gif": "https://media.giphy.com/media/xT1XGzH3Rk2uUUS4sU/giphy.gif"}
-        ]
+        "Beginner": ["Bhangra Shoulders", "Double Clap", "Foot Tap"]
     },
     "Tamil (Kuthu)": {
-        "Beginner": [
-            {"name": "Local Kuthu Step", "gif": "https://media.giphy.com/media/l41YkxvU8c7J7Bba0/giphy.gif"},
-            {"name": "Whistle Podu", "gif": "https://media.giphy.com/media/3o7TKDkMBg0I7x0F1K/giphy.gif"},
-            {"name": "Shirt Collar Dust", "gif": "https://media.giphy.com/media/xT0BKr4MvHdhtX8ZQ4/giphy.gif"}
-        ]
+        "Beginner": ["Local Kuthu Step", "Whistle Podu", "Shirt Collar Dust"]
     },
     "Telugu (Teen Maar)": {
-        "Beginner": [
-            {"name": "Teen Maar Beat", "gif": "https://media.giphy.com/media/l1J9FiGxR61OcF2mI/giphy.gif"},
-            {"name": "Hand Spin", "gif": "https://media.giphy.com/media/26ufmyJhA4z1rR7O0/giphy.gif"},
-            {"name": "Jump Step", "gif": "https://media.giphy.com/media/3o7TKR1b2XEE5AARyM/giphy.gif"}
-        ]
+        "Beginner": ["Teen Maar Beat", "Hand Spin", "Jump Step"]
     },
     "Kannada": {
-        "Beginner": [
-            {"name": "Sandalwood Sway", "gif": "https://media.giphy.com/media/l0HlJ7aASyD1kOiaQ/giphy.gif"},
-            {"name": "Folk Step", "gif": "https://media.giphy.com/media/3o7aD2saalZwwTlY3e/giphy.gif"}
-        ]
+        "Beginner": ["Sandalwood Sway", "Folk Step"]
     },
     "American Pop/Hip Hop": {
-        "Beginner": [
-            {"name": "The Slide", "gif": "https://media.giphy.com/media/26AHyTdIGd31R2w4U/giphy.gif"},
-            {"name": "The Woah", "gif": "https://media.giphy.com/media/M3i6XHZUcBJc4OLEXv/giphy.gif"},
-            {"name": "Two-Step", "gif": "https://media.giphy.com/media/l3vRlT2k2L35Cnn5C/giphy.gif"}
-        ]
+        "Beginner": ["The Slide", "The Woah", "Two-Step"]
     }
 }
 
@@ -82,6 +58,20 @@ st.markdown("""
     padding: 10px;
     margin-bottom: 15px;
     text-align: center;
+}
+@keyframes dance {
+    0% { transform: translateY(0) rotate(0deg) scale(1); }
+    25% { transform: translateY(-15px) rotate(-10deg) scale(1.1); }
+    50% { transform: translateY(0) rotate(0deg) scale(1); }
+    75% { transform: translateY(-15px) rotate(10deg) scale(1.1); }
+    100% { transform: translateY(0) rotate(0deg) scale(1); }
+}
+.ai-dancer {
+    font-size: 80px;
+    display: inline-block;
+    animation-name: dance;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -188,12 +178,13 @@ if generate_btn:
         # Pick steps
         chosen_steps = [random.choice(available_moves) for _ in range(sequence_length)]
         
-        # Display as a timeline of videos/GIFs
+        # Display as a timeline of simulated AI videos
         for idx, step in enumerate(chosen_steps):
             st.markdown(f"""
             <div class="step-card">
-                <h4>Step {idx+1}: {step['name']}</h4>
-                <img src="{step['gif']}" width="100%" style="border-radius: 8px;">
+                <h4>Step {idx+1}: {step}</h4>
+                <div class="ai-dancer" style="animation-duration: {60/bpm}s;">🕺</div>
+                <p style="color: #666; font-size: 12px; margin-top: 10px;">[AI Video Render Placeholder]</p>
             </div>
             """, unsafe_allow_html=True)
             
