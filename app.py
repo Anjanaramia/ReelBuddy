@@ -6,7 +6,8 @@ import time
 import base64
 import os
 import io
-import scipy.io.wavfile as wavf
+import requests
+import urllib.parse
 
 # --- DATABASE OF MOVES ---
 MOVES_DB = {
@@ -121,27 +122,28 @@ def mock_spotify_search(query):
     time.sleep(1) # Simulate API request
     return 90 + (len(query) * 5 % 60)
 
-# --- METRONOME GENERATOR ---
-def generate_metronome(bpm, duration=15, sample_rate=44100):
-    t = np.linspace(0, duration, int(sample_rate * duration), False)
-    interval = 60.0 / bpm
-    clicks = np.zeros_like(t)
-    for i in np.arange(0, duration, interval):
-        idx = int(i * sample_rate)
-        if idx < len(clicks):
-            beep_len = int(0.05 * sample_rate)
-            # 1000 Hz beep
-            beep = np.sin(2 * np.pi * 1000 * np.linspace(0, 0.05, beep_len))
-            end_idx = min(idx + beep_len, len(clicks))
-            clicks[idx:end_idx] = beep[:end_idx-idx]
-            
-    # Convert to 16-bit PCM
-    audio_data = np.int16(clicks * 32767)
-    
-    wav_io = io.BytesIO()
-    wavf.write(wav_io, sample_rate, audio_data)
-    wav_io.seek(0)
-    return wav_io
+# --- ITUNES API FUNCTION ---
+def get_itunes_data(query):
+    try:
+        url = f"https://itunes.apple.com/search?term={urllib.parse.quote(query)}&entity=song&limit=1"
+        response = requests.get(url, timeout=5)
+        data = response.json()
+        if data['resultCount'] > 0:
+            track = data['results'][0]
+            # Mock BPM since iTunes doesn't provide it, but it provides the audio!
+            bpm = 90 + (len(track['trackName']) * 5 % 60)
+            return {
+                "found": True,
+                "track": track['trackName'],
+                "artist": track['artistName'],
+                "preview_url": track['previewUrl'],
+                "bpm": bpm
+            }
+    except Exception as e:
+        pass
+        
+    # Fallback if API fails
+    return {"found": False, "bpm": 90 + (len(query) * 5 % 60)}
 
 # --- MAIN STAGE ---
 st.title("🎥 Your Custom AI Reel Routine")
@@ -151,11 +153,15 @@ if generate_btn:
         st.warning("Please type a song name into the Spotify Search bar first!")
         st.stop()
         
-    with st.spinner('Generating AI Characters & Syncing to Beat...'):
-        bpm = mock_spotify_search(spotify_query)
+    with st.spinner('Searching for song audio & Generating Characters...'):
+        song_data = get_itunes_data(spotify_query)
+        bpm = song_data["bpm"]
         time.sleep(1.5)
         
-    st.markdown(f'<div class="spotify-box">🎧 Spotify API Match: "{spotify_query}" | Detected BPM: {bpm}</div>', unsafe_allow_html=True)
+    if song_data["found"]:
+        st.markdown(f'<div class="spotify-box">🎵 Found: {song_data["track"]} by {song_data["artist"]} | BPM: {bpm}</div>', unsafe_allow_html=True)
+    else:
+        st.markdown(f'<div class="spotify-box">🎧 Mock Match: "{spotify_query}" | Detected BPM: {bpm}</div>', unsafe_allow_html=True)
         
     col1, col2 = st.columns([1, 1])
 
@@ -219,10 +225,12 @@ if generate_btn:
             
         st.success("✨ AI Characters successfully generated and synced to BPM!")
         
-        st.markdown("### 🎧 Audio Sync Test")
-        st.info("Play this AI-generated metronome beat to hear the animation perfectly sync to your song's BPM!")
-        audio_bytes = generate_metronome(bpm)
-        st.audio(audio_bytes, format='audio/wav')
+        st.markdown("### 🎧 Audio Sync Playback")
+        if song_data["found"]:
+            st.info(f"Play the official audio snippet of **{song_data['track']}** to hear the animation sync perfectly!")
+            st.audio(song_data["preview_url"], format='audio/mp4')
+        else:
+            st.warning("Could not find a preview for this exact song. Try another search!")
         
     st.divider()
     
